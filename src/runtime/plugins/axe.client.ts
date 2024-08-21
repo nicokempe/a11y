@@ -9,7 +9,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   async function run() {
     const result = await axe.run(document, {
       elementRef: true,
-      ...runOptions
+      ...runOptions,
     })
     for (const violation of result.violations) {
       // TODO: support different backends (console logging, devtools, etc.)
@@ -22,7 +22,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     minor: '#f7e167',
     moderate: '#cf863e',
     serious: '#f25c54',
-    critical: '#720026'
+    critical: '#720026',
   }
   function logViolation(violation: axe.Result) {
     const id = violation.id + ':' + violation.impact + ':' + violation.nodes.map(i => i.target).join(',')
@@ -40,7 +40,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   // TODO: trigger on nuxt hook or composable?
-  onNuxtReady(() => { run() })
+  onNuxtReady(() => {
+    run()
+  })
   nuxtApp.hook('page:finish', async () => {
     await nextTick()
     run()

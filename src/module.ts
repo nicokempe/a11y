@@ -1,5 +1,5 @@
 import { addPlugin, defineNuxtModule, createResolver } from '@nuxt/kit'
-import { Spec as AxeOptions, RunOptions as AxeRunOptions } from 'axe-core'
+import type { Spec as AxeOptions, RunOptions as AxeRunOptions } from 'axe-core'
 
 export interface ModuleOptions {
   enabled: boolean
@@ -12,23 +12,23 @@ export interface ModuleOptions {
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/a11y',
-    configKey: 'a11y'
+    configKey: 'a11y',
   },
   defaults: nuxt => ({
     enabled: nuxt.options.dev,
     axe: {
       options: {},
-      runOptions: {}
-    }
+      runOptions: {},
+    },
   }),
-  setup (options, nuxt) {
+  setup(options, nuxt) {
     if (!options.enabled) return
 
     const resolver = createResolver(import.meta.url)
 
     addPlugin(resolver.resolve('./runtime/plugins/axe.client'))
     nuxt.options.runtimeConfig.public.axe = options.axe
-  }
+  },
 })
 
 declare module '@nuxt/schema' {

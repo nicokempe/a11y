@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['../src/module'],
+  modules: ['@nuxt/a11y'],
   devtools: { enabled: true },
   compatibilityDate: '2024-08-21',
   a11y: {},

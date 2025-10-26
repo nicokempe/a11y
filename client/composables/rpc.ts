@@ -9,6 +9,7 @@ const RPC_NAMESPACE = 'nuxt-a11y-rpc'
 
 export const axeViolations = ref<A11yViolation[]>([])
 export const isScanRunning = ref(true)
+export const isConstantScanningEnabled = ref(false)
 
 export const devtools = ref<NuxtDevtoolsClient>()
 export const nuxtA11yRpc = ref<BirpcReturn<ServerFunctions>>()
@@ -28,7 +29,39 @@ onDevtoolsClientConnected(async (client) => {
     scanRunning(running: boolean) {
       isScanRunning.value = running
     },
+    constantScanningEnabled(enabled: boolean) {
+      isConstantScanningEnabled.value = enabled
+    },
   })
 
-  nuxtA11yRpc.value!.connected()
+  try {
+    await nuxtA11yRpc.value!.connected()
+  }
+  catch (error) {
+    console.debug('[Nuxt A11y] Initial connection error (expected):', error)
+  }
 })
+
+export function enableConstantScanning() {
+  if (!nuxtA11yRpc.value) return
+
+  nuxtA11yRpc.value.enableConstantScanning().catch(() => {})
+}
+
+export function disableConstantScanning() {
+  if (!nuxtA11yRpc.value) return
+
+  nuxtA11yRpc.value.disableConstantScanning().catch(() => {})
+}
+
+export function triggerScan() {
+  if (!nuxtA11yRpc.value) return
+
+  nuxtA11yRpc.value.triggerScan().catch(() => {})
+}
+
+export function resetViolations() {
+  if (!nuxtA11yRpc.value) return
+
+  nuxtA11yRpc.value.reset().catch(() => {})
+}

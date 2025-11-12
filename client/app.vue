@@ -1,49 +1,17 @@
 <script setup lang="ts">
-import { axeViolations, isScanRunning, currentRoute } from './composables/rpc'
-import { computed, ref, watch } from 'vue'
+import { axeViolations, currentRoute } from './composables/rpc'
+import { computed, ref } from 'vue'
 import type { ViolationsByImpact, ImpactStat, A11yViolation } from '../src/runtime/types'
 import { IMPACT_LEVELS, IMPACT_COLORS } from '../src/runtime/constants'
 import type axe from 'axe-core'
 
 const showCurrentPageFirst = ref(true)
-const isShowingSkeleton = ref(true)
-let skeletonTimer: ReturnType<typeof setTimeout> | null = null
-let skeletonStartTime = 0
-const MINIMUM_SKELETON_TIME = 1500 // 1.5 seconds
 
 // Get axe-core version for documentation link
 const { version: axeVersion, docsUrl: axeDocsUrl } = useAxeVersion()
 
-// Watch for scan state changes
-watch(isScanRunning, (running) => {
-  if (running) {
-    // Scan started - show skeleton immediately
-    isShowingSkeleton.value = true
-    skeletonStartTime = Date.now()
-
-    // Clear any existing timer
-    if (skeletonTimer) {
-      clearTimeout(skeletonTimer)
-    }
-  }
-})
-
-// Watch for violations updates
-watch(axeViolations, () => {
-  // Only hide skeleton if scan is done
-  if (!isScanRunning.value && isShowingSkeleton.value) {
-    if (skeletonTimer) {
-      clearTimeout(skeletonTimer)
-    }
-
-    const elapsed = Date.now() - skeletonStartTime
-    const remainingTime = Math.max(0, MINIMUM_SKELETON_TIME - elapsed)
-
-    skeletonTimer = setTimeout(() => {
-      isShowingSkeleton.value = false
-    }, remainingTime)
-  }
-}, { deep: true })
+// Skeleton loader logic
+const { isShowingSkeleton } = useSkeletonLoader()
 
 const violations = computed(() => axeViolations.value)
 

@@ -18,7 +18,7 @@ export default defineNuxtConfig({
         const subprocess = startSubprocess(
           {
             command: 'npx',
-            args: ['nuxi', 'dev', '--port', '3030'],
+            args: ['nuxt', 'dev', '--port', '3030'],
             cwd: resolve(__dirname, '../client'),
           },
           {
